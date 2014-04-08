@@ -1,12 +1,13 @@
 ## v2.7.0-SNAPSHOT / unreleased
 
- * Upgraded to apache-commons-pool v2.
+ * Updated official commands.json spec.
+ * Upgraded to apache-commons-pool v2, bumped default max active conns (8->16).
  * New lock-free connection pool cache (improved performance under contention).
 
 
 ## v2.6.2 / 2014 May 3
 
- * [#84] **Fix** empty-string writes (they were throwing exceptions) (@bzg).
+ * [#84] **FIX** empty-string writes (they were throwing exceptions) (@bzg).
 
 
 ## v2.6.1 / 2014 May 1
