@@ -35,6 +35,7 @@
   ;; [conn-opts & [s1 & sn :as sigs]]
   [conn-opts & sigs]
   `(let [[pool# conn#] (conns/pooled-conn ~conn-opts)
+         _# (conns/log-pool-stats pool#)
 
          ;; To support `wcar` nesting with req planning, we mimmick
          ;; `with-replies` stashing logic here to simulate immediate writes:
@@ -572,3 +573,16 @@
          (wcar {} (hmget* "hkey" "a" "b"))
          (wcar {} (hgetall* "hkey"))
          (wcar {} (parse str/upper-case (hgetall* "hkey"))))
+
+(defn jan-pool-debug [conn-opts & [pool-sample-p]]
+  (binding [conns/*pool-sample-p* (or pool-sample-p 0.01)]
+    (let [k "carmine:test:debug-parallel-key"]
+      (wcar conn-opts (set k 0))
+      (->> (fn [] (future (dotimes [n 100] (wcar {} (incr k)))))
+           (repeatedly 100) ; No. of parallel clients
+           (doall)
+           (map deref)
+           (dorun))
+      (wcar conn-opts (get k)))))
+
+(comment (jan-pool-debug {} 0.001))

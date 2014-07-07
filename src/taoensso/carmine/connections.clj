@@ -3,6 +3,7 @@
   pool. Originally adapted from redis-clojure."
   {:author "Peter Taoussanis"}
   (:require [taoensso.encore           :as encore]
+            [taoensso.timbre           :as timbre]
             [taoensso.carmine.protocol :as protocol])
   (:import  [java.net Socket URI]
             [java.io BufferedInputStream DataInputStream BufferedOutputStream]
@@ -170,3 +171,13 @@
                   [pool (get-conn pool spec)])))
          (catch Exception e
            (throw (Exception. "Carmine connection error" e))))))
+
+(def ^:dynamic *pool-sample-p*  0.01)
+(defn log-pool-stats [pool]
+  (let [^GenericKeyedObjectPool pool (:pool pool)
+        active (.getNumActive pool)
+        idle   (.getNumIdle   pool)
+        total  (+ active idle)]
+    (timbre/sometimes *pool-sample-p*
+      (println ;;timbre/debug
+        "Pool stats:" {:active active :idle idle :total total}))))
