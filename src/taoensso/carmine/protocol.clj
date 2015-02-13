@@ -11,6 +11,8 @@
   (:import  [java.io DataInputStream BufferedOutputStream]
             [clojure.lang Keyword]))
 
+(set! *warn-on-reflection* true)
+
 ;;; Outline (Carmine v3+)
 ;; * Dynamic context is established with `carmine/wcar`.
 ;; * Commands executed w/in this context push their requests (vectors) into
