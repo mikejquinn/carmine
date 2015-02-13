@@ -53,7 +53,7 @@
 (def ^{:tag 'bytes} bs-bin (bytestring "\u0000<"))
 
 (defn- ensure-reserved-first-byte [^bytes ba]
-  (when (= (first ba) 0)
+  (when (= (aget ba 0) 0)
     (throw (ex-info "Args can't begin with null terminator" {:ba ba})))
   ba)
 
